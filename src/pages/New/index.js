@@ -9,6 +9,7 @@ import { AuthContext } from '../../contexts/auth';
 
 import './styles.css';
 import { FiPlusCircle } from 'react-icons/fi'
+import { toast } from 'react-toastify';
 
 export default function New(){
   
@@ -61,10 +62,28 @@ export default function New(){
   }, []);
 
 
-  function handleRegister(e){
+  async function handleRegister(e){
     e.preventDefault();
 
-    alert('TESTE')
+    await firebase.firestore().collection('chamados')
+    .add({ 
+      created: new Date(),
+      cliente: customers[customerSelected].nomeFantasia,
+      clienteId: customers[customerSelected].id,
+      assunto: assunto,
+      status: status,
+      complemento: complemento,
+      userId: user.uid
+    })
+    .then(() => {
+      toast.success('Chamado criado com sucesso!');
+      setComplemento('');
+      setCustomerSelected(0);
+    })
+    .catch((error)=>{
+      toast.error('Ops erro ao registrar, tente mais tarde.')
+      console.log(error);
+    })
   }
 
   function handleChangeSelect(e){
